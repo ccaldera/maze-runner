@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
+using ValantDemoApi.Application.Entities;
+using ValantDemoApi.Application.Services;
+using ValantDemoApi.Models;
 
 namespace ValantDemoApi.Controllers
 {
@@ -8,17 +11,39 @@ namespace ValantDemoApi.Controllers
     [Route("[controller]")]
     public class MazeController : ControllerBase
     {
-        private readonly ILogger<MazeController> _logger;
+        private readonly IMazeService _mazeService;
 
-        public MazeController(ILogger<MazeController> logger)
+        public MazeController(IMazeService mazeService)
         {
-            _logger = logger;
+            _mazeService = mazeService
+                ?? throw new ArgumentException(nameof(mazeService));
+        }
+
+        [HttpGet("{id}/moves")]
+        public ActionResult<GetNextAvailableMovesResponse> GetNextAvailableMoves(
+            [FromRoute] Guid id,
+            [FromBody] GetNextAvailableMovesRequest request)
+        {
+            var maze = _mazeService.Get(id);
+
+            if(maze == null)
+            {
+                return NotFound();
+            }
+
+            return _mazeService.GetNextAvailableMoves(maze, request);
         }
 
         [HttpGet]
-        public IEnumerable<string> GetNextAvailableMoves()
+        public IEnumerable<Maze> GetAll()
         {
-          return new List<string> {"Up", "Down", "Left", "Right"};
+            return _mazeService.GetGames();
+        }
+
+        [HttpPost()]
+        public Maze Post([FromBody] CreateMazeRequest request)
+        {
+            return _mazeService.CreateGame(request.Maze);
         }
     }
 }
