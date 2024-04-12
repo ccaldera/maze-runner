@@ -4,8 +4,8 @@ namespace ValantDemoApi.Application.ValueObjects
 {
     public class Cell
     {
-        public int X { get; set; }
-        public int Y { get; set; }
+        public int Row { get; set; }
+        public int Column { get; set; }
         public string Value { get; set; }
         public bool IsStart 
         {
@@ -27,7 +27,7 @@ namespace ValantDemoApi.Application.ValueObjects
         {
             get
             {
-                return Value.Equals("0", StringComparison.InvariantCultureIgnoreCase) || IsStart || IsEnd;
+                return Value.Equals("O", StringComparison.InvariantCultureIgnoreCase) || IsStart || IsEnd;
             }
         }
 

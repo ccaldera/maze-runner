@@ -36,7 +36,7 @@ namespace ValantDemoApi.Application.Services
             Maze maze,
             GetNextAvailableMovesRequest request)
         {
-            var gameEnded = maze.GameEnded(request.X, request.Y);
+            var gameEnded = maze.GameEnded(request.Row, request.Column);
 
             var response = new GetNextAvailableMovesResponse();
 
@@ -46,11 +46,11 @@ namespace ValantDemoApi.Application.Services
                 return response;
             }
 
-            var moves = maze.GetValidMoves(request.Y, request.Y);
+            var moves = maze.GetValidMoves(request.Row, request.Column);
 
             if (moves.CanMoveUp)
             {
-                response.Moves.Add("Down");
+                response.Moves.Add("Up");
             }
 
             if (moves.CanMoveDown)

@@ -1,0 +1,30 @@
+.row{
+    display: flex;
+}
+
+.cell{
+    height: 50px;
+    width: 50px;
+    border: none;
+}
+
+.start{
+    background-color: #ffc2c2;    
+}
+
+.end{
+    background-color: #c4f6bc;    
+}
+
+.active{
+    background-color: #7197ff;
+}
+
+small{
+    color: gray;
+    margin-left: 0.5em;
+}
+
+.game{
+    margin-top: 2em;
+}

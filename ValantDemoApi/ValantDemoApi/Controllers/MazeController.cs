@@ -19,7 +19,7 @@ namespace ValantDemoApi.Controllers
                 ?? throw new ArgumentException(nameof(mazeService));
         }
 
-        [HttpGet("{id}/moves")]
+        [HttpPost("{id}/moves")]
         public ActionResult<GetNextAvailableMovesResponse> GetNextAvailableMoves(
             [FromRoute] Guid id,
             [FromBody] GetNextAvailableMovesRequest request)
@@ -38,6 +38,12 @@ namespace ValantDemoApi.Controllers
         public IEnumerable<Maze> GetAll()
         {
             return _mazeService.GetGames();
+        }
+
+        [HttpGet("{id}")]
+        public Maze Get([FromRoute] Guid id)
+        {
+            return _mazeService.Get(id);
         }
 
         [HttpPost()]

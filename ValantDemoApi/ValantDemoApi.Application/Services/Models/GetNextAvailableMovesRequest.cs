@@ -2,7 +2,7 @@
 {
     public class GetNextAvailableMovesRequest
     {
-        public int X { get; set; }
-        public int Y { get; set; }
+        public int Row { get; set; }
+        public int Column { get; set; }
     }
 }

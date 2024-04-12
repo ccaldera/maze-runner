@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ValantDemoApi.Application.ValueObjects;
@@ -9,9 +8,11 @@ namespace ValantDemoApi.Application.Entities
     public class Maze
     {
         public Guid Id { get; private set; }
-        public Cell[,] Board { get; private set; }
+        public Cell[][] Board { get; private set; }
         public int Rows { get; set; }
         public int Columns { get; set; }
+        public Cell Start { get; set; }
+        public Cell End { get; set; }
 
         public static Maze Create(string rawGame)
         {
@@ -20,41 +21,56 @@ namespace ValantDemoApi.Application.Entities
                 throw new InvalidDataException("No start was detected!");
             }
 
-            if (!rawGame.Contains("N", StringComparison.InvariantCultureIgnoreCase))
+            if (!rawGame.Contains("E", StringComparison.InvariantCultureIgnoreCase))
             {
                 throw new InvalidDataException("No end was detected!");
             }
 
-            var lines = rawGame.Split(Environment.NewLine);
-            var numberOfRows = lines.Count();
+            var rows = rawGame.Split(Environment.NewLine);
+            var numberOfRows = rows.Count();
 
             if (numberOfRows < 2)
             {
                 throw new InvalidDataException("There must be at least 2 rows");
             }
 
-            var numberOfColumns = lines.First().Length;
+            var numberOfColumns = rows.First().Length;
 
             if (numberOfColumns < 2)
             {
                 throw new InvalidDataException("There must be at least 2 columns");
             }
 
-            var board = new Cell[numberOfRows, numberOfColumns];
+            var board = new Cell[numberOfRows][];
 
-            for (int x = 0; x < lines.Length; x++)
+            Cell? start = null;
+            Cell? end = null;
+
+            for (int rowNumber = 0; rowNumber < rows.Length; rowNumber++)
             {
-                var column = lines[x];
-                for (int y = 0; y < column.Length; y++)
+                var column = rows[rowNumber];
+                board[rowNumber] = new Cell[numberOfColumns];
+                for (int columnNumber = 0; columnNumber < column.Length; columnNumber++)
                 {
-                    var value = column[y].ToString();
+                    var value = column[columnNumber].ToString();
 
-                    board[x, y] = new Cell
+                    var cell = new Cell
                     {
-                        X = x,
-                        Y = y,
+                        Row = rowNumber,
+                        Column = columnNumber,
                         Value = value
                     };
+
+                    if (cell.IsStart)
+                    {
+                        start = cell;
+                    }
+                    else if (cell.IsEnd)
+                    {
+                        end = cell;
+                    }
+
+                    board[rowNumber][columnNumber] = cell;
                 }
             }
 
@@ -63,37 +79,39 @@ namespace ValantDemoApi.Application.Entities
                 Id = Guid.NewGuid(),
                 Board = board,
                 Rows = numberOfRows,
-                Columns = numberOfColumns
+                Columns = numberOfColumns,
+                Start = start!,
+                End = end!
             };
         }
-        public bool GameEnded(int x , int y)
+        public bool GameEnded(int row, int column)
         {
-            var cell = Board[x, y];
+            var cell = Board[row][column];
             return cell.IsEnd;
         }
 
-        public Moves GetValidMoves(int x, int y)
+        public Moves GetValidMoves(int row, int column)
         {
             var moves = new Moves();
 
-            if(x - 1 > 0 && Board[x - 1, y].IsValidMovement)
+            if(row - 1 >= 0 && Board[row - 1][column].IsValidMovement)
             {
                 moves.CanMoveUp = true;
             }
 
-            if (x + 1 < Rows && Board[x + 1, y].IsValidMovement)
+            if (row + 1 < Rows && Board[row + 1][column].IsValidMovement)
             {
                 moves.CanMoveDown = true;
             }
 
-            if (y - 1 > 0 && Board[x, y - 1].IsValidMovement)
-            {
-                moves.CanMoveRight = true;
-            }
-
-            if (y + 1 < Columns && Board[x, y + 1].IsValidMovement)
+            if (column - 1 >= 0 && Board[row][column - 1].IsValidMovement)
             {
                 moves.CanMoveLeft = true;
+            }
+
+            if (column + 1 < Columns && Board[row][column + 1].IsValidMovement)
+            {
+                moves.CanMoveRight = true;
             }
 
             return moves;
