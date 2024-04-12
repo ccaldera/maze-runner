@@ -3,6 +3,7 @@
 <div class="create-game" *ngIf="creationModeEnabled">
     <textarea name="newGame" [(ngModel)]="newGame" [value]="newGame"></textarea>
     <button type="button" (click)="create()">Create</button>
+    <button type="button" (click)="creationModeEnabled = false">Cancel</button>
 </div>
 
 <div class="list" *ngFor="let game of games">

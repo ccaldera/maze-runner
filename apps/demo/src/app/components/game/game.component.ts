@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from "@angular/core";
 import { ValantDemoApiClient } from "../../api-client/api-client";
 import { MazeService } from "../../services/maze.service";
 
@@ -7,7 +7,7 @@ import { MazeService } from "../../services/maze.service";
     templateUrl: './game.component.html',
     styleUrls: ['./game.component.css']
 })
-export class Game implements OnInit
+export class Game implements OnInit, OnChanges
 {
     @Input() game:ValantDemoApiClient.Maze = {};
     currentCell:ValantDemoApiClient.Cell = {};
@@ -21,9 +21,17 @@ export class Game implements OnInit
     }
 
     async ngOnInit() {
+        await this.Relaod();    
+    }
+
+    private async Relaod() {
         this.currentCell = this.game.start;
 
-        await this.Move(this.currentCell.row, this.currentCell.column);    
+        await this.Move(this.currentCell.row, this.currentCell.column);
+    }
+
+    async ngOnChanges(changes: SimpleChanges) {        
+        await this.Relaod();        
     }
 
     private async Move(row:number, column:number) {
