@@ -1,7 +1,8 @@
-<a routerLink="create" type="button">Create a new game</a>
+<button type="button" (click)="creationModeEnabled = true">Create a new game</button>
 
-<div class="create-game">
-    <textarea name="newGame" #newGame="ngModel" [(ngModel)]="newGame" [value]="newGame"></textarea>
+<div class="create-game" *ngIf="creationModeEnabled">
+    <textarea name="newGame" [(ngModel)]="newGame" [value]="newGame"></textarea>
+    <button type="button" (click)="create()">Create</button>
 </div>
 
 <div class="list" *ngFor="let game of games">

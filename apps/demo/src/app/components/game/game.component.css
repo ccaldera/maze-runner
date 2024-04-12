@@ -28,3 +28,12 @@ small{
 .game{
     margin-top: 2em;
 }
+
+.buttons{
+    text-align: center;
+    width: 150px;
+}
+
+.arrow{
+    width: 50px;
+}

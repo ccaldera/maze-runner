@@ -26,7 +26,7 @@ namespace ValantDemoApi.Application.Entities
                 throw new InvalidDataException("No end was detected!");
             }
 
-            var rows = rawGame.Split(Environment.NewLine);
+            var rows = rawGame.Replace("\r\n", "\n").Split('\n');
             var numberOfRows = rows.Count();
 
             if (numberOfRows < 2)

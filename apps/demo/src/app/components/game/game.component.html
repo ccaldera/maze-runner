@@ -1,9 +1,15 @@
 <h3>Id: {{game.id}}<small>Size: {{game.rows}}x{{game.columns}}</small></h3>
 
-<button type="button" [disabled]="!isUpEnabled" (click)="moveUp()">Up</button>
-<button type="button" [disabled]="!isDownEnabled" (click)="moveDown()">Down</button>
-<button type="button" [disabled]="!isLeftEnabled" (click)="moveLeft()">Left</button>
-<button type="button" [disabled]="!isRightEnabled" (click)="moveRight()">Right</button>
+<div class="buttons">
+    <div>
+        <button type="button" class="arrow" [disabled]="!isUpEnabled" (click)="moveUp()">↑</button>
+    </div>
+    <div>
+        <button type="button" class="arrow" [disabled]="!isLeftEnabled" (click)="moveLeft()">←</button>
+        <button type="button" class="arrow" [disabled]="!isDownEnabled" (click)="moveDown()">↓</button>
+        <button type="button" class="arrow" [disabled]="!isRightEnabled" (click)="moveRight()">→</button>
+    </div>
+</div>
 
 <div class="game" *ngIf="game != undefined">
     <div class="row" *ngFor="let row of game.board; index as i">
@@ -12,7 +18,7 @@
             <button *ngIf="col.value == 'X'" [disabled]="col.value == 'X'" class="cell">{{col.value}}</button>
             <button *ngIf="col.value == 'S'" [ngClass]="{ 'active': isActiveCell(col) }" class="cell start">{{col.value}}</button>
             <button *ngIf="col.value == 'E'" [ngClass]="{ 'active': isActiveCell(col) }" class="cell end">{{col.value}}</button>
-            <button *ngIf="col.value == 'O'" class="cell" [ngClass]="{ 'active': isActiveCell(col) }">{{col.value}}</button>
+            <button *ngIf="col.value == 'O'" class="cell" [ngClass]="{ 'active': isActiveCell(col) }"></button>
         </div>
     </div>
 </div>

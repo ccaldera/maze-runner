@@ -15,4 +15,8 @@ import { firstValueFrom } from 'rxjs';
     public getMoves(id:string, request:ValantDemoApiClient.GetNextAvailableMovesRequest): Promise<ValantDemoApiClient.GetNextAvailableMovesResponse> {
       return firstValueFrom(this.httpClient.moves(id, request));
     }
+
+    public create(request:ValantDemoApiClient.CreateMazeRequest): Promise<ValantDemoApiClient.Maze> {
+      return firstValueFrom(this.httpClient.maze(request));
+    }
   }
