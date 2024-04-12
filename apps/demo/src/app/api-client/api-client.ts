@@ -27,9 +27,67 @@ export class Client {
     }
 
     /**
+     * @param body (optional) 
      * @return Success
      */
-    maze(): Observable<string[]> {
+    moves(id: string, body: GetNextAvailableMovesRequest | undefined): Observable<GetNextAvailableMovesResponse> {
+        let url_ = this.baseUrl + "/Maze/{id}/moves";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processMoves(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processMoves(<any>response_);
+                } catch (e) {
+                    return <Observable<GetNextAvailableMovesResponse>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetNextAvailableMovesResponse>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processMoves(response: HttpResponseBase): Observable<GetNextAvailableMovesResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText:string) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : <GetNextAvailableMovesResponse>JSON.parse(_responseText, this.jsonParseReviver);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText:string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetNextAvailableMovesResponse>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    mazeAll(): Observable<Maze[]> {
         let url_ = this.baseUrl + "/Maze";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -42,20 +100,20 @@ export class Client {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processMaze(response_);
+            return this.processMazeAll(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processMaze(<any>response_);
+                    return this.processMazeAll(<any>response_);
                 } catch (e) {
-                    return <Observable<string[]>><any>_observableThrow(e);
+                    return <Observable<Maze[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<string[]>><any>_observableThrow(response_);
+                return <Observable<Maze[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processMaze(response: HttpResponseBase): Observable<string[]> {
+    protected processMazeAll(response: HttpResponseBase): Observable<Maze[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -63,18 +121,159 @@ export class Client {
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
         if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText:string) => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : <string[]>JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = _responseText === "" ? null : <Maze[]>JSON.parse(_responseText, this.jsonParseReviver);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText:string) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<string[]>(<any>null);
+        return _observableOf<Maze[]>(<any>null);
     }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    maze(body: CreateMazeRequest | undefined): Observable<Maze> {
+        let url_ = this.baseUrl + "/Maze";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processMaze(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processMaze(<any>response_);
+                } catch (e) {
+                    return <Observable<Maze>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<Maze>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processMaze(response: HttpResponseBase): Observable<Maze> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText:string) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : <Maze>JSON.parse(_responseText, this.jsonParseReviver);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText:string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<Maze>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    maze2(id: string): Observable<Maze> {
+        let url_ = this.baseUrl + "/Maze/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processMaze2(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processMaze2(<any>response_);
+                } catch (e) {
+                    return <Observable<Maze>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<Maze>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processMaze2(response: HttpResponseBase): Observable<Maze> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText:string) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : <Maze>JSON.parse(_responseText, this.jsonParseReviver);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText:string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<Maze>(<any>null);
+    }
+}
+
+export interface GetNextAvailableMovesRequest {
+    row?: number;
+    column?: number;
+}
+
+export interface GetNextAvailableMovesResponse {
+    gameEnded?: boolean;
+    moves?: string[] | undefined;
+}
+
+export interface Cell {
+    row?: number;
+    column?: number;
+    value?: string | undefined;
+    readonly isStart?: boolean;
+    readonly isEnd?: boolean;
+    readonly isValidMovement?: boolean;
+    readonly isForbidden?: boolean;
+}
+
+export interface Maze {
+    readonly id?: string;
+    readonly board?: Cell[][] | undefined;
+    rows?: number;
+    columns?: number;
+    start?: Cell;
+    end?: Cell;
+}
+
+export interface CreateMazeRequest {
+    maze?: string | undefined;
 }
 
 export class ApiException extends Error {

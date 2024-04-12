@@ -1,0 +1,17 @@
+<button type="button" (click)="creationModeEnabled = true">Create a new game</button>
+
+<div class="create-game" *ngIf="creationModeEnabled">
+    <textarea name="newGame" [(ngModel)]="newGame" [value]="newGame"></textarea>
+    <button type="button" (click)="create()">Create</button>
+    <button type="button" (click)="creationModeEnabled = false">Cancel</button>
+</div>
+
+<div class="list" *ngFor="let game of games">
+    <div>
+        {{game.id}}
+        <small>Size: {{game.rows}}x{{game.columns}}</small>
+        <button type="button" (click)="selectGame(game)">Play</button>
+    </div>    
+</div>
+<br>
+<game *ngIf="selectedGame.id != undefined" [game]="selectedGame"></game>
