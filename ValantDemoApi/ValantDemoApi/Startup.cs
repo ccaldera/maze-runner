@@ -1,3 +1,5 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -7,6 +9,7 @@ using Microsoft.OpenApi.Models;
 using ValantDemoApi.Application.Repositories;
 using ValantDemoApi.Application.Services;
 using ValantDemoApi.Infrastructure.Repositories;
+using ValantDemoApi.Validators;
 
 namespace ValantDemoApi
 {
@@ -30,6 +33,8 @@ namespace ValantDemoApi
             });
             services.AddScoped<IMazeService, MazeService>();
             services.AddScoped<IMazeRepository, MazeRepository>();
+            services.AddValidatorsFromAssemblyContaining<GetNextAvailableMovesRequestValidator>();
+            services.AddFluentValidationAutoValidation();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
