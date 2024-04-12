@@ -7,8 +7,8 @@ namespace ValantDemoApi.Application.Entities
 {
     public class Maze
     {
-        public Guid Id { get; private set; }
-        public Cell[][] Board { get; private set; }
+        public Guid Id { get; set; }
+        public Cell[][] Board { get; set; }
         public int Rows { get; set; }
         public int Columns { get; set; }
         public Cell Start { get; set; }
